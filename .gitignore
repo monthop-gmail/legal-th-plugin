@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.npm
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/
+
+# Reference repos (cloned for study)
+knowledge-work-plugins/
+
+# API keys / secrets
+*.key
+*.pem
+credentials.json

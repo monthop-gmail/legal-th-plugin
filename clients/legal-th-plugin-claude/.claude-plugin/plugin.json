@@ -1,0 +1,8 @@
+{
+  "name": "legal-th",
+  "version": "1.0.0",
+  "description": "AI-powered legal productivity plugin for Thai law — contract review, PDPA compliance, NDA triage, and Thai legal workflows. Connects to remote MCP server for Thai legal knowledge base.",
+  "author": {
+    "name": "Legal-TH Team"
+  }
+}

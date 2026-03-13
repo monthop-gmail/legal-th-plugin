@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "legal-th": {
+      "type": "http",
+      "url": "https://api.legal-th.example.com/mcp",
+      "description": "Thai Legal Knowledge Base — laws, templates, compliance engine, glossary"
+    }
+  }
+}
