@@ -210,6 +210,7 @@ Commands 3 ตัวหลักใช้ได้ **ทันทีโดยไ
 | [Concept Document](legal-th-plugin-concept-v2.md) | ภาพรวม project ทั้งหมด |
 | [Client Spec](clients/legal-th-client-spec.md) | Spec สำหรับทีมพัฒนา client plugin |
 | [Server Spec](server/legal-th-server-spec.md) | Spec สำหรับทีมพัฒนา MCP server |
+| [Legal-TH Server (repo)](https://github.com/monthop-gmail/legal-th-server) | MCP Server repo (แยก) |
 
 ---
 
