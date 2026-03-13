@@ -586,20 +586,25 @@ signature = HMAC-SHA256(
 
 ## 6. Tech Stack
 
-### 6.1 แนะนำ (Recommended)
+### 6.1 Tech Stack (ตัดสินใจแล้ว)
 
-| Layer | เทคโนโลยี | เหตุผล |
-|-------|----------|--------|
-| **Runtime** | Node.js (TypeScript) | ทีมคุ้นเคย, ecosystem ใหญ่, MCP SDK รองรับ |
-| **Framework** | Fastify หรือ Hono | เร็ว, lightweight, JSON-RPC friendly |
-| **Database** | PostgreSQL | เสถียร, full-text search ภาษาไทย, JSONB support |
-| **Search** | PostgreSQL Full-Text (Phase 1) → Elasticsearch (Phase 2+) | เริ่มง่าย แล้วค่อย scale |
-| **Cache** | Redis | session, rate limiting, query cache |
-| **ORM** | Drizzle หรือ Prisma | type-safe, migration support |
-| **Validation** | Zod | ตรวจ input ทุก endpoint |
-| **Auth** | API Key + HMAC | เรียบง่าย ปลอดภัย |
-| **Logging** | Pino | structured logging, เร็ว |
-| **Testing** | Vitest | เร็ว, TypeScript native |
+| Layer | เทคโนโลยี | Version | สถานะ |
+|-------|----------|---------|-------|
+| **Runtime** | Node.js (TypeScript) | 20+ / TS 5.6 | ✅ ใช้งานแล้ว |
+| **Framework** | Fastify | 5.0 | ✅ ใช้งานแล้ว |
+| **Database** | PostgreSQL | 16 | ✅ ใช้งานแล้ว |
+| **Search** | PostgreSQL Full-Text (Phase 1) → Elasticsearch (Phase 2+) | — | 🔲 รอ implement |
+| **Cache** | Redis | — | 🔲 Phase 2 |
+| **ORM** | Drizzle | 0.35 | ✅ ใช้งานแล้ว |
+| **Validation** | Zod | 3.23 | ✅ ใช้งานแล้ว |
+| **Auth** | API Key + HMAC | — | ✅ stub พร้อม |
+| **Logging** | Pino | 9.0 | ✅ ใช้งานแล้ว |
+| **Testing** | Vitest | 2.1 | ✅ พร้อม (ยังไม่มี test) |
+| **Linting** | ESLint + typescript-eslint | 9.x | ✅ CI ผ่าน |
+| **Container** | Docker Compose | v2 | ✅ base + dev/prd override |
+| **Tunnel** | Cloudflare Tunnel | latest | ✅ compose sidecar |
+| **Secrets** | SOPS + age | — | ✅ config พร้อม |
+| **CI/CD** | GitHub Actions | — | ✅ CI ผ่าน |
 
 ### 6.2 ทางเลือกอื่น
 
@@ -649,12 +654,19 @@ feature/xxx → develop → main
             auto test   auto prd
 ```
 
-| Trigger | Action |
-|---------|--------|
-| Push to `develop` | Auto deploy → test env |
-| Push to `main` | Auto deploy → prd env |
+**CI workflow** (`.github/workflows/deploy.yml`):
 
-Deploy steps: `git pull` → `sops decrypt` → `docker compose up -d --build` → health check
+| Trigger | Build (lint+tsc+test) | Deploy |
+|---------|:--------------------:|:------:|
+| Push to `develop` | ✅ | auto → test env |
+| Push to `main` | ✅ | auto → prd env |
+| Pull Request | ✅ | ไม่ deploy |
+
+- Build job รันเสมอ (lint → build → test)
+- Deploy job รันเฉพาะ push + เมื่อตั้ง `DEPLOY_SSH_KEY` secret แล้ว
+- ถ้ายังไม่ตั้ง secrets → deploy skip อัตโนมัติ (ไม่ fail)
+- Deploy steps: `git pull` → `sops decrypt` → `docker compose up -d --build` → health check
+- Tech: ESLint + typescript-eslint, TypeScript strict, Vitest
 
 #### Environment Separation
 
@@ -705,15 +717,19 @@ Docker Compose on VPS / DigitalOcean Droplet
 **เป้าหมาย:** Server ตอบ MCP request ได้ มีข้อมูลกฎหมายพื้นฐาน
 
 **Deliverables:**
-- [ ] MCP HTTP server skeleton (JSON-RPC 2.0 handler)
-- [ ] API Key authentication
-- [ ] `legal_th/search_laws` — full-text search ใน PostgreSQL
-- [ ] `legal_th/glossary_lookup` — ค้นหาศัพท์กฎหมาย
-- [ ] `legal_th/get_template` — ดึง template สัญญา
+- [x] MCP HTTP server skeleton (JSON-RPC 2.0 handler)
+- [x] API Key authentication (stub — พร้อม implement)
+- [x] `legal_th/search_laws` — skeleton พร้อม (รอเติม query logic)
+- [x] `legal_th/glossary_lookup` — skeleton พร้อม (รอเติม query logic)
+- [x] `legal_th/get_template` — skeleton พร้อม (รอเติม query logic)
 - [ ] ข้อมูล: 50+ กฎหมาย, 200+ ศัพท์, 10+ templates
-- [ ] Basic request logging
+- [x] Basic request logging (Pino)
 - [ ] API documentation (OpenAPI spec)
-- [ ] Deploy บน Railway/Render
+- [x] Docker Compose (base + dev + prd) + CF Tunnel + SOPS
+- [x] CI/CD (GitHub Actions — lint, build, test ผ่าน)
+- [x] Database schema (Drizzle ORM — 7 tables)
+- [ ] Database migration + seed data
+- [ ] Service logic (full-text search, DB queries)
 
 **ทีม:** 1-2 คน
 **ความซับซ้อน:** ต่ำ-ปานกลาง
