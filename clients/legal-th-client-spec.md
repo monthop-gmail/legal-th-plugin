@@ -128,7 +128,7 @@ Config ที่ชี้ไป remote MCP server
   "mcpServers": {
     "legal-th": {
       "type": "http",
-      "url": "https://api.legal-th.example.com/mcp"
+      "url": "https://svc.legal-th.example.com/mcp"
     }
   }
 }
@@ -140,11 +140,18 @@ Config ที่ชี้ไป remote MCP server
   "mcp": {
     "legal-th": {
       "type": "remote",
-      "url": "https://api.legal-th.example.com/mcp"
+      "url": "https://svc.legal-th.example.com/mcp"
     }
   }
 }
 ```
+
+> **หมายเหตุ:** URL จริงจะเปลี่ยนตาม env:
+> - dev: `svc.dev.legal-th.example.com`
+> - test: `svc.test.legal-th.example.com`
+> - prd: `svc.legal-th.example.com`
+>
+> Server expose ผ่าน Cloudflare Tunnel (ดู [server repo](https://github.com/monthop-gmail/legal-th-server))
 
 ### 3.5 Connectors
 
