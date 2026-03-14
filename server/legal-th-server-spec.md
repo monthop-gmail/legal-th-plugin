@@ -619,18 +619,23 @@ signature = HMAC-SHA256(
 
 > Infrastructure ตาม [dev-env-skill checklist](https://github.com/monthop-gmail/ai-skill/blob/main/infrastructure/dev-env-skill/CHECKLIST.md)
 
-#### Docker Compose Pattern
+#### Docker Compose Pattern (Modular — v2.20+)
 
 ```
-docker-compose.yml          ← base (app + PostgreSQL + CF Tunnel)
-  + docker-compose.dev.yml  ← dev override (hot reload, Adminer, DB port)
-  + docker-compose.prd.yml  ← prd override (resource limits, healthcheck, tunnel)
+docker-compose.yml                    ← root: include services/*
+  ├── services/app/compose.yaml       ← MCP Server
+  ├── services/postgres/compose.yaml  ← PostgreSQL 16
+  ├── services/redis/compose.yaml     ← Redis (Phase 2)
+  └── services/tunnels/compose.yaml   ← CF Tunnel
+  + docker-compose.dev.yml            ← dev override (hot reload, Adminer, DB port)
+  + docker-compose.prd.yml            ← prd override (resource limits, healthcheck)
 ```
 
+- ใช้ `include:` แยก service ต่อไฟล์ — เพิ่ม/ลบ service ไม่ต้องแก้ไฟล์หลัก
+- ทุก service อยู่ใน shared network `legal-th-net`
 - Compose base เดียวกันทุก env — ต่างกันแค่ `.env` + override file
-- Dockerfile, source code เหมือนกันทุก env
 - Dev: `docker compose -f docker-compose.yml -f docker-compose.dev.yml up`
-- Prd: `docker compose -f docker-compose.yml -f docker-compose.prd.yml --profile tunnel up -d`
+- Prd: `docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d`
 
 #### Cloudflare Tunnel
 
